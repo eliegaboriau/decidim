@@ -685,6 +685,9 @@ en:
           notification_title: The %{user_group_name} user group has updated its profile, leaving it unverified. You can now verify it in the <a href="%{groups_admin_path}">admin panel</a>.
       notification_event:
         notification_title: An event occured to <a href="%{resource_path}">%{resource_title}</a>.
+      nickname_event:
+        notification_title: Your nickname has been modified from %{old_nickname} to %{new_nickname} because of new regulations.
+        notification_body: You can see your new nickname at your profile page.
       reports:
         resource_hidden:
           email_intro: An administrator removed your %{resource_type} because it has been reported as %{report_reasons}.

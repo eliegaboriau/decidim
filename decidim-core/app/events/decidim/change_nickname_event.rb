@@ -6,8 +6,10 @@ module Decidim
     delegate :organization, to: :user, prefix: false
     delegate :url_helpers, to: "Decidim::Core::Engine.routes"
 
+    i18n_attributes :old_nickname, :new_nickname
+
     def notification_title
-      "<p><strong> Your nickname has been modified </strong></p> Go to your profile to see the modification".html_safe
+      "<p><strong> #{I18n.t("decidim.events.nickname_event.notification_title",i18n_options)} </strong></p> #{I18n.t("decidim.events.nickname_event.notification_body")}".html_safe
     end
 
     def resource_path
@@ -16,6 +18,13 @@ module Decidim
 
     def resource_title
       nil
+    end
+
+    def i18n_options
+      {
+        old_nickname: extra["old_nickname"],
+        new_nickname: extra["new_nickname"]
+      }
     end
   end
 end

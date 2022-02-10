@@ -9,7 +9,7 @@ module Decidim
     i18n_attributes :old_nickname, :new_nickname
 
     def notification_title
-      "<p><strong> #{I18n.t("decidim.events.nickname_event.notification_title",i18n_options)} </strong></p> #{I18n.t("decidim.events.nickname_event.notification_body")}".html_safe
+      "<p><strong> #{I18n.t("decidim.events.nickname_event.notification_title", i18n_options)} </strong></p> #{I18n.t("decidim.events.nickname_event.notification_body")}".html_safe
     end
 
     def resource_path

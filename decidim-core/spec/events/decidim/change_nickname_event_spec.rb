@@ -8,7 +8,7 @@ describe Decidim::ChangeNicknameEvent do
   let(:event_name) { "decidim.events.change_nickname_event" }
   let(:resource) { create :user }
   let(:author) { resource }
-  let(:extra) { {old_nickname: "Nick", new_nickname: "nick"} }
+  let(:extra) { { old_nickname: "Nick", new_nickname: "nick" } }
 
   describe "notification_title" do
     it "is generated correctly" do

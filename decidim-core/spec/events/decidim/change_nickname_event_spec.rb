@@ -12,7 +12,7 @@ describe Decidim::ChangeNicknameEvent do
 
   describe "notification_title" do
     it "is generated correctly" do
-      expect(subject.notification_title).to include("<p><strong> Your nickname has been modified from #{extra[:old_nickname]} to #{extra[:new_nickname]} because of new regulations. </strong></p> You can see your new nickname at your profile page.")
+      expect(subject.notification_title).to include("<p><strong> Your nickname has been modified from #{extra[:old_nickname]} to #{extra[:new_nickname]} because of new regulations.")
     end
   end
 end

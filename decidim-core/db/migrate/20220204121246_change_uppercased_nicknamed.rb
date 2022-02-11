@@ -13,16 +13,16 @@ class ChangeUppercasedNicknamed < ActiveRecord::Migration[6.0]
       # if already downcased, don't care
       next if user.nickname.downcase == user.nickname
 
-      Decidim::User.where("nickname ILIKE ?", user.nickname.downcase).order(:created_at).each_with_index do |similar_user, index|
+      Decidim::User.where("nickname ILIKE ?", user.nickname.downcase).order(:created_at).each_with_index do |similar_user, _index|
         next if has_changed.include? similar_user
         next if user == similar_user
 
         # change his nickname to the lowercased one with 5 random numbers
         begin
-          update_user_nickname(similar_user,"#{similar_user.nickname.downcase}-#{rand(99999)}")
+          update_user_nickname(similar_user, "#{similar_user.nickname.downcase}-#{rand(99_999)}")
         rescue ActiveRecord::RecordInvalid => e
           logger.warn("Nickname already taken : #{e}")
-          update_user_nickname(similar_user,"#{similar_user.nickname.downcase}-#{rand(99999)}")
+          update_user_nickname(similar_user, "#{similar_user.nickname.downcase}-#{rand(99_999)}")
         end
 
         logger.info("User similar ID : #{similar_user.id}")
@@ -30,7 +30,7 @@ class ChangeUppercasedNicknamed < ActiveRecord::Migration[6.0]
         has_changed.append(similar_user)
       end
 
-      update_user_nickname(user,user.nickname.downcase)
+      update_user_nickname(user, user.nickname.downcase)
       logger.info("User ID : #{user.id}")
       logger.info("to #{user.nickname}")
       has_changed.append(user)

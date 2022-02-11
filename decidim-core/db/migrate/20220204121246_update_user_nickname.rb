@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ChangeUppercasedNicknamed < ActiveRecord::Migration[6.0]
+class UpdateUsersNickname < ActiveRecord::Migration[6.0]
   def up
     logger = Logger.new($stdout)
     logger.info("Updating users nickname ...")
@@ -13,26 +13,27 @@ class ChangeUppercasedNicknamed < ActiveRecord::Migration[6.0]
       # if already downcased, don't care
       next if user.nickname.downcase == user.nickname
 
-      Decidim::User.where("nickname ILIKE ?", user.nickname.downcase).order(:created_at).each_with_index do |similar_user, _index|
+      Decidim::User.where("nickname ILIKE ?", user.nickname.downcase).order(:created_at).each do |similar_user|
         next if has_changed.include? similar_user
         next if user == similar_user
 
-        # change his nickname to the lowercased one with 5 random numbers
+        # change her nickname to the lowercased one with 5 random numbers
         begin
           update_user_nickname(similar_user, "#{similar_user.nickname.downcase}-#{rand(99_999)}")
         rescue ActiveRecord::RecordInvalid => e
-          logger.warn("Nickname already taken : #{e}")
+          logger.warn("User ID (#{similar_user.id}) : #{e}")
           update_user_nickname(similar_user, "#{similar_user.nickname.downcase}-#{rand(99_999)}")
         end
 
-        logger.info("User similar ID : #{similar_user.id}")
-        logger.info("to #{similar_user.nickname}")
         has_changed.append(similar_user)
       end
 
-      update_user_nickname(user, user.nickname.downcase)
-      logger.info("User ID : #{user.id}")
-      logger.info("to #{user.nickname}")
+      begin
+        update_user_nickname(user, user.nickname.downcase)
+      rescue ActiveRecord::RecordInvalid => e
+        logger.warn("User ID (#{similar_user.id}) : #{e}")
+        update_user_nickname(user, "#{user.nickname.downcase}-#{rand(99_999)}")
+      end
       has_changed.append(user)
     end
     logger.info("Process terminated, #{has_changed.count} users nickname have been updated.")
@@ -54,10 +55,7 @@ class ChangeUppercasedNicknamed < ActiveRecord::Migration[6.0]
   def update_user_nickname(user, new_nickname)
     if user.update!(nickname: new_nickname)
       send_notification_to(user, new_nickname)
-      logger.warn("User updated")
       user
-    else
-      logger.warn("An error happened")
     end
   end
 end

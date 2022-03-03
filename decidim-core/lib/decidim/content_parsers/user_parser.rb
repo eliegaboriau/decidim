@@ -43,11 +43,11 @@ module Decidim
       end
 
       def existing_users
-        @existing_users ||= Decidim::User.where(organization: current_organization, nickname: content_nicknames)
+        @existing_users ||= Decidim::User.where("decidim_organization_id = ? AND LOWER(nickname) = ?",current_organization.id, content_nicknames)
       end
 
       def content_nicknames
-        @content_nicknames ||= content.scan(MENTION_REGEX).flatten.uniq
+        @content_nicknames ||= content.scan(MENTION_REGEX).flatten.uniq.map!(&:downcase)
       end
 
       def current_organization

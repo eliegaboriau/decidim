@@ -26,7 +26,7 @@ module Decidim
       # @return [String] the content with the valid mentions replaced by a global id
       def rewrite
         content.gsub(MENTION_REGEX) do |match|
-          users[match[1..-1]]&.to_global_id&.to_s || match
+          users[match[1..-1].downcase]&.to_global_id&.to_s || match
         end
       end
 
@@ -35,15 +35,13 @@ module Decidim
         Metadata.new(existing_users)
       end
 
-      private
-
       def users
         @users ||=
           existing_users.index_by(&:nickname)
       end
 
       def existing_users
-        @existing_users ||= Decidim::User.where("decidim_organization_id = ? AND LOWER(nickname) = ?",current_organization.id, content_nicknames)
+        @existing_users ||= Decidim::User.where("decidim_organization_id = ? AND LOWER(nickname) IN (?)",current_organization.id, content_nicknames)
       end
 
       def content_nicknames

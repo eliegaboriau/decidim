@@ -10,8 +10,6 @@ class UpdateUsersNickname < ActiveRecord::Migration[6.0]
 
     Decidim::User.find_each do |user|
       next if has_changed.include? user
-      # if already downcased, don't care
-      next if user.nickname.downcase == user.nickname
 
       Decidim::User.where("nickname ILIKE ?", user.nickname.downcase).order(:created_at).each do |similar_user|
         next if has_changed.include? similar_user
@@ -19,22 +17,14 @@ class UpdateUsersNickname < ActiveRecord::Migration[6.0]
 
         # change her nickname to the lowercased one with 5 random numbers
         begin
-          update_user_nickname(similar_user, "#{similar_user.nickname.downcase}-#{rand(99_999)}")
+          update_user_nickname(similar_user, "#{similar_user.nickname}-#{rand(99_999)}")
         rescue ActiveRecord::RecordInvalid => e
           logger.warn("User ID (#{similar_user.id}) : #{e}")
-          update_user_nickname(similar_user, "#{similar_user.nickname.downcase}-#{rand(99_999)}")
+          update_user_nickname(similar_user, "#{similar_user.nickname}-#{rand(99_999)}")
         end
 
         has_changed.append(similar_user)
       end
-
-      begin
-        update_user_nickname(user, user.nickname.downcase)
-      rescue ActiveRecord::RecordInvalid => e
-        logger.warn("User ID (#{similar_user.id}) : #{e}")
-        update_user_nickname(user, "#{user.nickname.downcase}-#{rand(99_999)}")
-      end
-      has_changed.append(user)
     end
     logger.info("Process terminated, #{has_changed.count} users nickname have been updated.")
   end

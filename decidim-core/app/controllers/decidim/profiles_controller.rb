@@ -83,7 +83,7 @@ module Decidim
     def profile_holder
       return if params[:nickname].blank?
 
-      @profile_holder ||= Decidim::UserBaseEntity.find_by("LOWER(nickname) = ? AND decidim_organization_id = ?",params[:nickname].downcase,current_organization.id)
+      @profile_holder ||= Decidim::UserBaseEntity.find_by("LOWER(nickname) = ? AND decidim_organization_id = ?", params[:nickname].downcase, current_organization.id)
     end
   end
 end

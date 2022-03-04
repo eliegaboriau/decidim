@@ -41,7 +41,7 @@ module Decidim
       end
 
       def existing_users
-        @existing_users ||= Decidim::User.where("decidim_organization_id = ? AND LOWER(nickname) IN (?)",current_organization.id, content_nicknames)
+        @existing_users ||= Decidim::User.where("decidim_organization_id = ? AND LOWER(nickname) IN (?)", current_organization.id, content_nicknames)
       end
 
       def content_nicknames

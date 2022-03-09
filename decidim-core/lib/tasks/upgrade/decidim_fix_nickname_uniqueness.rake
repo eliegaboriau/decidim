@@ -31,6 +31,7 @@ namespace :decidim do
     end
 
     private
+
     def send_notification_to(user)
       Decidim::EventsManager.publish({
                                        event: "decidim.events.nickname_event",
@@ -46,6 +47,5 @@ namespace :decidim do
         user
       end
     end
-
   end
 end
